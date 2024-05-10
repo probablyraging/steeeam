@@ -24,8 +24,8 @@ export default function UserBans({ steamId }) {
             <Divider className='hidden bg-light-border mb-7 lg:block' />
             <div className='flex justify-center lg:block'>
                 <div className='grid grid-cols-4 grid-rows-3 text-sm lg:gap-y-2 lg:grid-cols-2 lg:max-w-[200px]'>
-                    <div className='flex items-center'>
-                        <p>VAC Status</p>
+                    <div className='flex items-center max-w-[100px]'>
+                        <p className='truncate'>VAC Status</p>
                     </div>
                     <div className='flex justify-center items-center'>
                         {!userBans ? (
@@ -35,8 +35,8 @@ export default function UserBans({ steamId }) {
                         )}
                     </div>
 
-                    <div className='flex items-center'>
-                        <p>Comm. Status</p>
+                    <div className='flex items-center max-w-[100px]'>
+                        <p className='truncate'>Comm. Status</p>
                     </div>
                     <div className='flex justify-center items-center'>
                         {!userBans ? (
@@ -46,8 +46,8 @@ export default function UserBans({ steamId }) {
                         )}
                     </div>
 
-                    <div className='flex items-center'>
-                        <p>Trade Status</p>
+                    <div className='flex items-center max-w-[100px]'>
+                        <p className='truncate'>Trade Status</p>
                     </div>
                     <div className='flex justify-center items-center'>
                         {!userBans ? (
@@ -57,8 +57,8 @@ export default function UserBans({ steamId }) {
                         )}
                     </div>
 
-                    <div className='flex items-center'>
-                        <p>VAC Bans</p>
+                    <div className='flex items-center max-w-[100px]'>
+                        <p className='truncate'>VAC Bans</p>
                     </div>
                     <div className='flex justify-center items-center'>
                         {!userBans ? (
@@ -68,8 +68,8 @@ export default function UserBans({ steamId }) {
                         )}
                     </div>
 
-                    <div className='flex items-center'>
-                        <p>Game Bans</p>
+                    <div className='flex items-center max-w-[100px]'>
+                        <p className='truncate'>Game Bans</p>
                     </div>
                     <div className='flex justify-center items-center'>
                         {!userBans ? (
@@ -79,8 +79,8 @@ export default function UserBans({ steamId }) {
                         )}
                     </div>
 
-                    <div className='flex items-center'>
-                        <p>Last Ban</p>
+                    <div className='flex items-center max-w-[100px]'>
+                        <p className='truncate'>Last Ban</p>
                     </div>
                     <div className='flex justify-center items-center'>
                         {!userBans ? (

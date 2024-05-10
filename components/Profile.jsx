@@ -39,7 +39,7 @@ export default function Profile({ uid }) {
     return (
         <React.Fragment>
             <Head>
-                <title>{userSummary.personaName}'s game list' - Steeeam</title>
+                <title>{userSummary.personaName} - Steeeam</title>
             </Head>
 
             <div className='bg-base'>

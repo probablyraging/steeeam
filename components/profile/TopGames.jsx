@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { IoGameController } from "react-icons/io5";
-import { Skeleton } from '@nextui-org/react';
+import { Divider, Skeleton } from '@nextui-org/react';
 import GameDetails from './GameDetails';
 
 export default function TopGames({ steamId, countryCode }) {
@@ -46,11 +46,11 @@ export default function TopGames({ steamId, countryCode }) {
 
     return (
         <React.Fragment>
-            <div className='flex flex-col w-full'>
+            <div className='flex flex-col w-full mt-14'>
                 <div className='flex justify-between items-center'>
                     <div className='flex items-center gap-1'>
                         <IoGameController fontSize={22} />
-                        <p id='games-list' className='text-lg font-medium py-2'>
+                        <p className='text-lg font-medium py-2'>
                             Top 5 Games
                         </p>
                     </div>
@@ -60,6 +60,8 @@ export default function TopGames({ steamId, countryCode }) {
                         </p>
                     </Link>
                 </div>
+
+                <Divider className='w-full h-[1px] bg-light-border mb-5 lg:mb-5' />
 
                 <div className='flex flex-col w-full gap-4'>
                     {slicedData.map((item, index) => (

@@ -41,16 +41,18 @@ export default function ProfileSummary({ steamId, countryCode, countryAbbr, isLo
         <React.Fragment>
             <div className='flex justify-between items-center flex-col gap-4 lg:items-end lg:flex-row'>
                 <SearchInput countryCode={countryCode} countryAbbr={countryAbbr} isLoading={isLoading} />
+            </div>
+
+            <div className='flex items-start flex-col gap-12'>
                 <AccountValue totals={totals} />
-            </div>
-            <Divider className='w-full h-[1px] bg-light-border my-10 lg:mt-5' />
-            <div className='flex justify-between items-start flex-col gap-4 lg:flex-row'>
-                <GameProgressBar playCount={playCount} gameData={gameData} totals={totals} />
-                <ExpProgressBar steamId={steamId} />
-            </div>
-            <Divider className='w-full h-[1px] bg-light-border my-10 lg:mt-5' />
-            <div className='flex justify-between items-center flex-col gap-4 lg:items-end lg:flex-col'>
                 <GameStats gameData={gameData} totals={totals} countryAbbr={countryAbbr} />
+                <div className='flex justify-between items-start flex-col w-full gap-8 lg:flex-row'>
+                    <GameProgressBar steamId={steamId} playCount={playCount} gameData={gameData} totals={totals} />
+                    <ExpProgressBar steamId={steamId} />
+                </div>
+            </div>
+
+            <div className='flex items-start flex-col gap-4'>
                 <TopGames steamId={steamId} countryCode={countryCode} />
             </div>
         </React.Fragment>

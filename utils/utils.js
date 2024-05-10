@@ -70,6 +70,13 @@ export function minutesToHoursCompact(number) {
     return hours.toLocaleString();
 }
 
+export function minutesToHoursPrecise(number) {
+    const durationInMinutes = number;
+    const duration = moment.duration(durationInMinutes, "minutes");
+    const hours = duration.asHours();
+    return hours.toFixed(1);
+}
+
 export function getMaxByProperty(data, property) {
     return data.reduce((acc, curr) => (curr[property] > acc[property] ? curr : acc), data[0]);
 }

@@ -11,7 +11,7 @@ export default function PrivateGames({ steamId }) {
                     <p className='text-4xl font-bold text-center'>Uh-oh!</p>
                     <p className='text-center'>This account has their games list set to private so we're unable to provide much information.</p>
                     <Link href={`https://steamcommunity.com/profiles/${steamId}/edit/settings`} target='_blank'>
-                        <Button className='bg-pop text-black font-medium rounded-md'>
+                        <Button className='bg-pop text-black dark:text-white font-medium rounded-md'>
                             Change Account Privacy
                         </Button>
                     </Link>

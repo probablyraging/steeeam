@@ -1,6 +1,6 @@
 import axios from 'axios';
 import SteamAPI from 'steamapi';
-import { getAverage, minutesToHoursCompact } from '@/utils/utils';
+import { getAverage, minutesToHoursCompact, minutesToHoursPrecise } from '@/utils/utils';
 
 export default async function POST(req, res) {
     if (req.headers.authorization.split(' ')[1] !== process.env.INTERNAL_API_KEY) {
@@ -22,6 +22,7 @@ export default async function POST(req, res) {
 
         // Get appIds and played/unplayed game counts
         let gameIds = [];
+        let playtime = [];
         let playedCount = 0;
         let unplayedCount = 0;
         let totalPlaytime = 0;
@@ -29,6 +30,7 @@ export default async function POST(req, res) {
             gameIds.push(item.game.id);
             if (item.minutes > 0) {
                 playedCount++;
+                playtime.push(item.minutes);
                 totalPlaytime += item.minutes;
             }
             if (item.minutes === 0) unplayedCount++;
@@ -71,9 +73,10 @@ export default async function POST(req, res) {
         const totalFinalFormatted = formatter.format(totalFinal / 100);
         const averageGamePrice = formatter.format(getAverage(prices) / 100);
         const totalPlaytimeHours = minutesToHoursCompact(totalPlaytime);
+        const averagePlaytime = minutesToHoursPrecise(getAverage(playtime));
         const totalGames = userGames.length;
 
-        responseData.push({ totals: { totalInitialFormatted, totalFinalFormatted, averageGamePrice, totalPlaytimeHours, totalGames } });
+        responseData.push({ totals: { totalInitialFormatted, totalFinalFormatted, averageGamePrice, totalPlaytimeHours, averagePlaytime, totalGames } });
         responseData.push({ playCount: { playedCount, unplayedCount, totalPlaytime } });
 
         return res.status(200).json(responseData);

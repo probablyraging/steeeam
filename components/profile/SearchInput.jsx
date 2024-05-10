@@ -39,7 +39,7 @@ export default function SearchInput({ countryCode, countryAbbr, isLoading }) {
 
     return (
         <React.Fragment>
-            <div className='relative flex items-end w-full xl:w-[450px]'>
+            <div className='relative flex items-end w-full'>
                 <Input
                     size='lg'
                     startContent={<RiSearchLine className='text-neutral-500' fontSize={20} />}

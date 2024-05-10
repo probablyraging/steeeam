@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Progress, Skeleton } from '@nextui-org/react';
 
-export default function GameProgressBar({ playCount, gameData, totals }) {
+export default function GameProgressBar({ steamId, playCount, gameData, totals }) {
 
     if (!playCount || !gameData) {
         return (
@@ -35,7 +35,7 @@ export default function GameProgressBar({ playCount, gameData, totals }) {
                     }}
                 />
 
-                <Link href={'#games-list'}>
+                <Link href={`https://steamcommunity.com/profiles/${steamId}/games?tab=all`} target='_blank'>
                     <p className='text-sm mt-1'>
                         View Games List
                     </p>
