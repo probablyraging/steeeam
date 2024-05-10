@@ -10,13 +10,9 @@ async function createPartialCanvas(userData) {
     const ctx = canvas.getContext('2d');
     GlobalFonts.registerFromPath(path.join(process.cwd(), 'public', 'Ubuntu-Bold.ttf'), 'Ubuntu');
 
-    // Background image
-    const background = await loadImage(path.join(process.cwd(), 'public', 'gaming.jpg'));
-    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-
     // Opaque rectangle
     const cornerRadius = 0;
-    ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+    ctx.fillStyle = '#0b0b0b';
     ctx.beginPath();
     ctx.moveTo(0 + cornerRadius, 0);
     ctx.lineTo(canvas.width - 0 - cornerRadius, 0);
@@ -104,10 +100,6 @@ async function createPartialCanvas(userData) {
     }
     await drawCenteredRoundedImage();
 
-    // Steam logo
-    const steamLogo = await loadImage(path.join(process.cwd(), 'public', 'steam-logo.png'));
-    ctx.drawImage(steamLogo, 230, 105, 22, 22);
-
     const buffer = canvas.toBuffer('image/png');
     return buffer;
 }
@@ -120,13 +112,9 @@ async function createFullCanvas(userData, gameData) {
     const ctx = canvas.getContext('2d');
     GlobalFonts.registerFromPath(path.join(process.cwd(), 'public', 'Ubuntu-Bold.ttf'), 'Ubuntu');
 
-    // Background image
-    const background = await loadImage(path.join(process.cwd(), 'public', 'gaming.jpg'));
-    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-
     // Opaque rectangle
     const cornerRadius = 0;
-    ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+    ctx.fillStyle = '#0b0b0b';
     ctx.beginPath();
     ctx.moveTo(0 + cornerRadius, 0);
     ctx.lineTo(canvas.width - 0 - cornerRadius, 0);
@@ -294,10 +282,6 @@ async function createFullCanvas(userData, gameData) {
         ctx.restore();
     }
     await drawCenteredRoundedImage();
-
-    // Steam logo
-    const steamLogo = await loadImage(path.join(process.cwd(), 'public', 'steam-logo.png'));
-    ctx.drawImage(steamLogo, 230, 105, 22, 22);
 
     const buffer = canvas.toBuffer('image/png');
     return buffer;
