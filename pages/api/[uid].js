@@ -1,4 +1,4 @@
-import { getRelativeTimeImprecise, resolveVanityUrl, getAverage, minutesToHoursPrecise, minutesToHoursCompact } from '@/utils/utils';
+import { getRelativeTimeImprecise, resolveVanityUrl, getAverage, minutesToHoursPrecise, minutesToHoursCompact, pricePerHour } from '@/utils/utils';
 import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import SteamAPI from "steamapi";
 import * as sidr from 'steamid-resolver';
@@ -21,7 +21,7 @@ async function getUserData(uid) {
             visible: userSummary.visible,
             avatar: userSummary.avatar.large,
             lastLogOff: userSummary.lastLogOffTimestamp,
-            createdAt: getRelativeTimeImprecise(userSummary.createdTimestamp),
+            createdAt: userSummary.createdTimestamp,
             countryCode: userSummary.countryCode,
             stateCode: userSummary.stateCode,
             onlineState: sidrSummary.onlineState ? sidrSummary.onlineState[0] : null,
@@ -181,7 +181,7 @@ async function createFullCanvas(userData, gameData) {
     ctx.drawImage(locIcon, 20, 220);
     ctx.fillStyle = '#fff';
     ctx.font = '12px Geist';
-    let location = userData.location;
+    let location = userData.location || 'Unknown';
     if (location.length > 22) location = location.slice(0, 22) + '...';
     ctx.fillText(location, 43, 234);
 
@@ -196,7 +196,7 @@ async function createFullCanvas(userData, gameData) {
     const joinIcon = await loadImage(path.join(process.cwd(), 'public', 'join-icon.png'));
     ctx.drawImage(joinIcon, 20, 270);
     ctx.font = '12px Geist';
-    const createdAt = `${userData.createdAt ? `Joined ${userData.createdAt}` : 'Unknown'}`;
+    const createdAt = `${userData.createdAt ? `Joined ${getRelativeTimeImprecise(userData.createdAt)} ago` : 'Unknown'}`;
     ctx.fillText(createdAt, 43, 284);
 
     // Vertical divider
@@ -229,14 +229,14 @@ async function createFullCanvas(userData, gameData) {
     ctx.fillText('Current Price', 215, 80);
     ctx.fillStyle = '#f87171';
     ctx.font = '600 26px Geist';
-    ctx.fillText(`${gameData.totals.totalFinalFormatted}`, 215, 110);
+    ctx.fillText(`${gameData.totals?.totalFinalFormatted || '$0'}`, 215, 110);
     //Initial
     ctx.fillStyle = '#adadad';
     ctx.font = '16px Geist';
     ctx.fillText('Initial Price', 370, 80);
     ctx.fillStyle = '#4ade80';
     ctx.font = '600 26px Geist';
-    ctx.fillText(`${gameData.totals.totalInitialFormatted}`, 370, 110);
+    ctx.fillText(`${gameData.totals?.totalInitialFormatted || '$0'}`, 370, 110);
 
     // Game stats
     // Total games
@@ -245,39 +245,39 @@ async function createFullCanvas(userData, gameData) {
     ctx.fillText('Total Games', 215, 160);
     ctx.fillStyle = '#fff';
     ctx.font = '600 26px Geist';
-    ctx.fillText(`${gameData.totals.totalGames}`, 215, 190);
+    ctx.fillText(`${gameData.totals?.totalGames || '0'}`, 215, 190);
     // Average price
     ctx.fillStyle = '#adadad';
     ctx.font = '16px Geist';
     ctx.fillText('Avg. Price', 370, 160);
     ctx.fillStyle = '#fff';
     ctx.font = '600 26px Geist';
-    ctx.fillText(`${gameData.totals.averageGamePrice}`, 370, 190);
+    ctx.fillText(`${gameData.totals?.averageGamePrice || '$0'}`, 370, 190);
     // Price per hour
     ctx.fillStyle = '#adadad';
     ctx.font = '16px Geist';
     ctx.fillText('Price Per Hour', 510, 160);
     ctx.fillStyle = '#fff';
     ctx.font = '600 26px Geist';
-    ctx.fillText(`${gameData.totals.averageGamePrice}`, 510, 190);
+    ctx.fillText(`${pricePerHour(gameData.totals.totalFinalFormatted, gameData.totals.totalPlaytimeHours) || '0'}`, 510, 190);
     // Average playtime
     ctx.fillStyle = '#adadad';
     ctx.font = '16px Geist';
     ctx.fillText('Avg, Playtime', 215, 240);
     ctx.fillStyle = '#fff';
     ctx.font = '600 26px Geist';
-    ctx.fillText(`${gameData.totals.averagePlaytime}`, 215, 270);
+    ctx.fillText(`${gameData.totals.averagePlaytime || '0'}`, 215, 270);
     // Total playtime
     ctx.fillStyle = '#adadad';
     ctx.font = '16px Geist';
     ctx.fillText('Avg, Playtime', 370, 240);
     ctx.fillStyle = '#fff';
     ctx.font = '600 26px Geist';
-    ctx.fillText(`${gameData.totals.totalPlaytimeHours}h`, 370, 270);
+    ctx.fillText(`${gameData.totals?.totalPlaytimeHours || '0'}h`, 370, 270);
 
     // Game progress bar
-    const playedCount = gameData.playCount.playedCount.toString();
-    const gameCount = gameData.totals.totalGames.toString();
+    const playedCount = gameData.playCount?.playedCount.toString() || '0';
+    const gameCount = gameData.totals?.totalGames.toString() || '0';
     ctx.fillStyle = '#60a5fa';
     ctx.font = 'bold 14px Ubuntu';
     ctx.fillText(playedCount, 215, 324);

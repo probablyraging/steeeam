@@ -10,7 +10,7 @@ export default function AccountValue({ totals }) {
                     <div className='flex items-center gap-1'>
                         <PiGraphBold fontSize={22} />
                         <p id='games-list' className='text-lg font-medium py-2'>
-                            Game Statistics
+                            Account Statistics
                         </p>
                     </div>
                 </div>
