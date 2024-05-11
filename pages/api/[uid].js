@@ -15,8 +15,6 @@ async function getUserData(uid) {
         const userSummary = await sapi.getUserSummary(steamId);
         const sidrSummary = await sidr.steamID64ToFullInfo(steamId);
 
-        console.log(userSummary);
-
         return {
             steamId: steamId,
             personaName: userSummary.nickname,
@@ -102,10 +100,10 @@ async function getGameData(uid) {
         const averagePlaytime = minutesToHoursPrecise(getAverage(playtime));
         const totalGames = userGames.length;
 
-        responseData.push({ totals: { totalInitialFormatted, totalFinalFormatted, averageGamePrice, totalPlaytimeHours, averagePlaytime, totalGames } });
-        responseData.push({ playCount: { playedCount, unplayedCount, totalPlaytime } });
-
-        return { responseData };
+        return {
+            totals: { totalInitialFormatted, totalFinalFormatted, averageGamePrice, totalPlaytimeHours, averagePlaytime, totalGames },
+            playCount: { playedCount, unplayedCount, totalPlaytime }
+        };
     } catch (e) {
         console.error(e);
         return { message: 'Error' };
@@ -118,7 +116,6 @@ export default async function handler(req, res) {
     let canvasBuffer;
 
     const userData = await getUserData(uid);
-
     const gameData = await getGameData(uid);
 
     if (gameData.message === 'Private games') {
@@ -152,11 +149,26 @@ async function createFullCanvas(userData, gameData) {
     ctx.fillStyle = '#0b0b0b';
     ctx.fillRect(0, 0, width, height);
 
-    // Username
+    // Username (truncated if too long)
     ctx.fillStyle = '#fff';
-    ctx.font = '20px Geist';
-    const username = userData.personaName;
-    ctx.fillText(username, 20, 180);
+    ctx.font = '700 20px Geist';
+    let username = userData.personaName;
+    const usernameWidth = ctx.measureText(username).width;
+    if (usernameWidth > 180) {
+        let truncatedLength = 0;
+        for (let i = 0; i < username.length; i++) {
+            let truncatedText = username.slice(0, i) + '...';
+            let textWidth = ctx.measureText(truncatedText).width;
+            if (textWidth > 180) {
+                break;
+            }
+            truncatedLength = i;
+        }
+        const truncatedUsername = username.slice(0, truncatedLength) + '...';
+        ctx.fillText(truncatedUsername, 20, 180);
+    } else {
+        ctx.fillText(username, 20, 180);
+    }
 
     // SteamID
     ctx.fillStyle = '#adadad';
@@ -169,7 +181,8 @@ async function createFullCanvas(userData, gameData) {
     ctx.drawImage(locIcon, 20, 220);
     ctx.fillStyle = '#fff';
     ctx.font = '12px Geist';
-    const location = userData.location;
+    let location = userData.location;
+    if (location.length > 22) location = location.slice(0, 22) + '...';
     ctx.fillText(location, 43, 234);
 
     // Last seen
@@ -186,11 +199,199 @@ async function createFullCanvas(userData, gameData) {
     const createdAt = `${userData.createdAt ? `Joined ${userData.createdAt}` : 'Unknown'}`;
     ctx.fillText(createdAt, 43, 284);
 
+    // Vertical divider
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#ffffff30';
+    ctx.beginPath();
+    ctx.moveTo(200, 15);
+    ctx.lineTo(200, canvas.height - 15);
+    ctx.stroke();
 
+    // Account stats header
+    const gameStatsIcon = await loadImage(path.join(process.cwd(), 'public', 'game-stats-icon.png'));
+    ctx.drawImage(gameStatsIcon, 215, 20);
+    ctx.font = '600 16px Geist';
+    const gameStatsHeader = 'Account Statistics';
+    ctx.fillText(gameStatsHeader, 245, 37);
 
+    // Horizontal divider
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#ffffff30';
+    ctx.beginPath();
+    ctx.moveTo(215, 50);
+    ctx.lineTo(canvas.width - 15, 50);
+    ctx.stroke();
 
+    // Account value
+    // Current
+    ctx.fillStyle = '#adadad';
+    ctx.font = '16px Geist';
+    ctx.fillText('Current Price', 215, 80);
+    ctx.fillStyle = '#f87171';
+    ctx.font = '600 26px Geist';
+    ctx.fillText(`${gameData.totals.totalFinalFormatted}`, 215, 110);
+    //Initial
+    ctx.fillStyle = '#adadad';
+    ctx.font = '16px Geist';
+    ctx.fillText('Initial Price', 370, 80);
+    ctx.fillStyle = '#4ade80';
+    ctx.font = '600 26px Geist';
+    ctx.fillText(`${gameData.totals.totalInitialFormatted}`, 370, 110);
 
-    // User avatar
+    // Game stats
+    // Total games
+    ctx.fillStyle = '#adadad';
+    ctx.font = '16px Geist';
+    ctx.fillText('Total Games', 215, 160);
+    ctx.fillStyle = '#fff';
+    ctx.font = '600 26px Geist';
+    ctx.fillText(`${gameData.totals.totalGames}`, 215, 190);
+    // Average price
+    ctx.fillStyle = '#adadad';
+    ctx.font = '16px Geist';
+    ctx.fillText('Avg. Price', 370, 160);
+    ctx.fillStyle = '#fff';
+    ctx.font = '600 26px Geist';
+    ctx.fillText(`${gameData.totals.averageGamePrice}`, 370, 190);
+    // Price per hour
+    ctx.fillStyle = '#adadad';
+    ctx.font = '16px Geist';
+    ctx.fillText('Price Per Hour', 510, 160);
+    ctx.fillStyle = '#fff';
+    ctx.font = '600 26px Geist';
+    ctx.fillText(`${gameData.totals.averageGamePrice}`, 510, 190);
+    // Average playtime
+    ctx.fillStyle = '#adadad';
+    ctx.font = '16px Geist';
+    ctx.fillText('Avg, Playtime', 215, 240);
+    ctx.fillStyle = '#fff';
+    ctx.font = '600 26px Geist';
+    ctx.fillText(`${gameData.totals.averagePlaytime}`, 215, 270);
+    // Total playtime
+    ctx.fillStyle = '#adadad';
+    ctx.font = '16px Geist';
+    ctx.fillText('Avg, Playtime', 370, 240);
+    ctx.fillStyle = '#fff';
+    ctx.font = '600 26px Geist';
+    ctx.fillText(`${gameData.totals.totalPlaytimeHours}h`, 370, 270);
+
+    // Game progress bar
+    const playedCount = gameData.playCount.playedCount.toString();
+    const gameCount = gameData.totals.totalGames.toString();
+    ctx.fillStyle = '#60a5fa';
+    ctx.font = 'bold 14px Ubuntu';
+    ctx.fillText(playedCount, 215, 324);
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 14px Ubuntu';
+    ctx.fillText(`/`, (ctx.measureText(playedCount).width + 215) + 5, 324);
+    ctx.fillStyle = '#60a5fa';
+    ctx.font = 'bold 14px Ubuntu';
+    ctx.fillText(gameCount, (ctx.measureText(playedCount).width + 215) + 15, 324);
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 14px Ubuntu';
+    ctx.fillText(`games played`, (ctx.measureText(playedCount).width + ctx.measureText(gameCount).width) + 215 + 20, 324);
+    ctx.fillText(`${((parseInt(playedCount) / parseInt(gameCount)) * 100).toFixed(0)}%`, 405, 324);
+
+    function createRoundedProgressBar(barwidth, barheight, progress, barColor, backgroundColor, borderRadius) {
+        ctx.fillStyle = backgroundColor;
+        roundRect(ctx, 215, 330, barwidth, barheight, borderRadius, true, false);
+        const barWidth = Math.floor(barwidth * (progress / 100));
+        ctx.fillStyle = barColor;
+        roundRect(ctx, 215, 330, barWidth, barheight, borderRadius, true, true);
+    }
+
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+        if (typeof stroke === 'undefined') {
+            stroke = true;
+        }
+        if (typeof radius === 'undefined') {
+            radius = 5;
+        }
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.arcTo(x + width, y, x + width, y + radius, radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+        ctx.lineTo(x + radius, y + height);
+        ctx.arcTo(x, y + height, x, y + height - radius, radius);
+        ctx.lineTo(x, y + radius);
+        ctx.arcTo(x, y, x + radius, y, radius);
+        ctx.closePath();
+        if (stroke) {
+            ctx.stroke();
+        }
+        if (fill) {
+            ctx.fill();
+        }
+    }
+    const barwidth = 220;
+    const barheight = 12;
+    const progress = (parseInt(playedCount) / parseInt(gameCount)) * 100;
+    const barColor = '#006fee';
+    const backgroundColor = '#313131';
+    const borderRadius = 6;
+    createRoundedProgressBar(barwidth, barheight, progress, barColor, backgroundColor, borderRadius);
+
+    // Exp progress bar
+    // const playedCountt = gameData.playCount.playedCount.toString();
+    // const gameCountt = gameData.totals.totalGames.toString();
+    // ctx.fillStyle = '#60a5fa';
+    // ctx.font = 'bold 14px Ubuntu';
+    // ctx.fillText(playedCountt, 470, 324);
+    // ctx.fillStyle = 'white';
+    // ctx.font = 'bold 14px Ubuntu';
+    // ctx.fillText(`/`, (ctx.measureText(playedCountt).width + 470) + 5, 324);
+    // ctx.fillStyle = '#60a5fa';
+    // ctx.font = 'bold 14px Ubuntu';
+    // ctx.fillText(gameCountt, (ctx.measureText(playedCountt).width + 470) + 15, 324);
+    // ctx.fillStyle = 'white';
+    // ctx.font = 'bold 14px Ubuntu';
+    // ctx.fillText(`games played`, (ctx.measureText(playedCountt).width + ctx.measureText(gameCountt).width) + 470 + 20, 324);
+    // ctx.fillText(`${((parseInt(playedCountt) / parseInt(gameCountt)) * 100).toFixed(0)}%`, 630, 324);
+
+    // function createRoundedProgressBarr(barwidth, barheight, progress, barColor, backgroundColor, borderRadius) {
+    //     ctx.fillStyle = backgroundColor;
+    //     roundRect(ctx, 470, 330, barwidth, barheight, borderRadius, true, false);
+    //     const barWidth = Math.floor(barwidth * (progress / 100));
+    //     ctx.fillStyle = barColor;
+    //     roundRect(ctx, 470, 330, barWidth, barheight, borderRadius, true, true);
+    // }
+
+    // function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+    //     if (typeof stroke === 'undefined') {
+    //         stroke = true;
+    //     }
+    //     if (typeof radius === 'undefined') {
+    //         radius = 5;
+    //     }
+    //     ctx.beginPath();
+    //     ctx.moveTo(x + radius, y);
+    //     ctx.lineTo(x + width - radius, y);
+    //     ctx.arcTo(x + width, y, x + width, y + radius, radius);
+    //     ctx.lineTo(x + width, y + height - radius);
+    //     ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+    //     ctx.lineTo(x + radius, y + height);
+    //     ctx.arcTo(x, y + height, x, y + height - radius, radius);
+    //     ctx.lineTo(x, y + radius);
+    //     ctx.arcTo(x, y, x + radius, y, radius);
+    //     ctx.closePath();
+    //     if (stroke) {
+    //         ctx.stroke();
+    //     }
+    //     if (fill) {
+    //         ctx.fill();
+    //     }
+    // }
+    // const barwidthh = 220;
+    // const barheightt = 12;
+    // const progresss = (parseInt(playedCountt) / parseInt(gameCountt)) * 100;
+    // const barColorr = '#006fee';
+    // const backgroundColorr = '#313131';
+    // const borderRadiuss = 6;
+    // createRoundedProgressBarr(barwidthh, barheightt, progresss, barColorr, backgroundColorr, borderRadiuss);
+
+    // Avatar
     async function drawCenteredRoundedImage() {
         const avatar = await loadImage(userData.avatar);
         const desiredWidth = 130;
