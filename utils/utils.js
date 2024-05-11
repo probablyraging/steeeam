@@ -110,94 +110,106 @@ export async function resolveVanityUrl(uid) {
     }
 }
 
-export async function getUserData(steamid) {
-    const steamId = await resolveVanityUrl(steamid);
+// export async function getUserData(uid) {
+//     try {
+//         const steamId = await resolveVanityUrl(uid);
 
-    const userData = await axios.get(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${process.env.STEAM_API_KEY}&steamids=${steamId}`);
-    const userLevel = await axios.get(`https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=${process.env.STEAM_API_KEY}&steamid=${steamId}`);
+//         const sapi = new SteamAPI(process.env.STEAM_API_KEY);
 
-    // Profile not public
-    if (userData.data.response.players[0].communityvisibilitystate === 1) {
-        return { message: 'Private profile' };
-    }
+//         const userSummary = await sapi.getUserSummary(steamId);
+//         const sidrSummary = await sidr.steamID64ToFullInfo(steamId);
 
-    return { profile: userData.data.response.players[0], level: userLevel.data.response.player_level };
-}
+//         return {
+//             steamId: steamId,
+//             personaName: userSummary.nickname,
+//             visible: userSummary.visible,
+//             avatar: userSummary.avatar.large,
+//             lastLogOff: userSummary.lastLogOffTimestamp,
+//             createdAt: getRelativeTimeImprecise(userSummary.createdTimestamp),
+//             countryCode: userSummary.countryCode,
+//             stateCode: userSummary.stateCode,
+//             onlineState: sidrSummary.onlineState ? sidrSummary.onlineState[0] : null,
+//             location: sidrSummary.location ? sidrSummary.location[0] : 'Unknown',
+//         };
+//     } catch (e) {
+//         console.error(e);
+//         return { message: 'Error' };
+//     }
+// }
 
-export async function getGameData(steamid) {
-    const steamId = await resolveVanityUrl(steamid);
+// export async function getGameData(uid) {
+//     try {
+//         const steamId = await resolveVanityUrl(uid);
 
-    const gameListData = await axios.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${process.env.STEAM_API_KEY}&steamid=${steamId}`);
-    const gameList = gameListData.data.response.games;
+//         const sapi = new SteamAPI(process.env.STEAM_API_KEY);
 
-    // If no games list then assume the user's profile is private
-    if (!gameList) {
-        return { message: 'Private games list' };
-    }
+//         const userGames = await sapi.getUserOwnedGames(steamId, { includeExtendedAppInfo: true, includeFreeGames: true, includeFreeSubGames: true, includeUnvettedApps: true })
+//             .catch(() => {
+//                 return { message: 'Private games' };
+//             });
 
-    const gameCount = gameList.length;
+//         // Get appIds and played/unplayed game counts
+//         let gameIds = [];
+//         let playtime = [];
+//         let playedCount = 0;
+//         let unplayedCount = 0;
+//         let totalPlaytime = 0;
+//         for (const item of userGames) {
+//             gameIds.push(item.game.id);
+//             if (item.minutes > 0) {
+//                 playedCount++;
+//                 playtime.push(item.minutes);
+//                 totalPlaytime += item.minutes;
+//             }
+//             if (item.minutes === 0) unplayedCount++;
+//         }
 
-    // Get appIds and played/unplayed game counts
-    let appIds = [];
-    let playedCount = 0;
-    let unplayedCount = 0;
-    let totalPlaytime = 0;
-    for (const game of gameList) {
-        appIds.push(game?.appid);
-        if (game.playtime_forever > 0) {
-            playedCount++;
-            totalPlaytime += game.playtime_forever;
-        }
-        if (game.playtime_forever === 0) unplayedCount++;
-    }
+//         // Chunk gameIds into batches of 500
+//         const maxGameIdsPerCall = 500;
+//         const gameIdChunks = [];
+//         for (let i = 0; i < gameIds.length; i += maxGameIdsPerCall) {
+//             gameIdChunks.push(gameIds.slice(i, i + maxGameIdsPerCall));
+//         }
 
-    // Chunk appIds into batches of 500
-    const maxAppIdsPerCall = 500;
-    const appIdsChunks = [];
-    for (let i = 0; i < appIds.length; i += maxAppIdsPerCall) {
-        appIdsChunks.push(appIds.slice(i, i + maxAppIdsPerCall));
-    }
+//         // Make multiple HTTP calls for each chunk
+//         let responseData = [];
+//         let prices = [];
+//         let totalInitial = 0;
+//         let totalFinal = 0;
+//         for (const chunk of gameIdChunks) {
+//             const chunkString = chunk.join(',');
+//             const gamePrices = await axios.get(`https://store.steampowered.com/api/appdetails?appids=${chunkString}&filters=price_overview`);
 
-    // Make multiple HTTP calls for each chunk
-    let responseData = [];
-    let prices = [];
-    let totalInitial = 0;
-    let totalFinal = 0;
-    for (const appIdsChunk of appIdsChunks) {
-        const chunkString = appIdsChunk.join(',');
-        const gamePrices = await axios.get(`https://store.steampowered.com/api/appdetails?appids=${chunkString}&filters=price_overview`);
+//             // Process response data for each chunk
+//             for (const [gameId, gameData] of Object.entries(gamePrices.data)) {
+//                 if (gameData.data && gameData.data.price_overview) {
+//                     const finalPrice = gameData.data.price_overview.final || null;
+//                     const initialPrice = gameData.data.price_overview.initial || null;
 
-        // Process response data for each chunk
-        for (const [appId, appData] of Object.entries(gamePrices.data)) {
-            if (appData.data && appData.data.price_overview) {
-                const finalPrice = appData.data.price_overview.final || null;
-                const finalPriceFormatted = appData.data.price_overview.final_formatted || null;
-                const initialPrice = appData.data.price_overview.initial || null;
-                const initialPriceFormatted = appData.data.price_overview.initial_formatted || finalPriceFormatted;
+//                     responseData.push({ [gameId]: gameData.data.price_overview });
+//                     prices.push(initialPrice);
 
-                responseData.push({ appId, initialPrice, initialPriceFormatted, finalPrice, finalPriceFormatted });
-                prices.push(initialPrice);
+//                     totalInitial += initialPrice;
+//                     totalFinal += finalPrice;
+//                 }
+//             }
+//         }
 
-                totalInitial += initialPrice;
-                totalFinal += finalPrice;
-            }
-        }
-    }
+//         // Format totals
+//         const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+//         const totalInitialFormatted = formatter.format(totalInitial / 100);
+//         const totalFinalFormatted = formatter.format(totalFinal / 100);
+//         const averageGamePrice = formatter.format(getAverage(prices) / 100);
+//         const totalPlaytimeHours = minutesToHoursCompact(totalPlaytime);
+//         const averagePlaytime = minutesToHoursPrecise(getAverage(playtime));
+//         const totalGames = userGames.length;
 
-    // Sort response data finalPrice high to low
-    responseData.sort((a, b) => b.finalPrice - a.finalPrice);
+//         responseData.push({ totals: { totalInitialFormatted, totalFinalFormatted, averageGamePrice, totalPlaytimeHours, averagePlaytime, totalGames } });
+//         responseData.push({ playCount: { playedCount, unplayedCount, totalPlaytime } });
 
-    // Format total prices
-    const formatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
-
-    const totalInitialFormatted = formatter.format(totalInitial / 100);
-    const totalFinalFormatted = formatter.format(totalFinal / 100);
-    const averageGamePrice = formatter.format(getAverage(prices) / 100);
-    const totalPlaytimeHours = minutesToHoursCompact(totalPlaytime);
-
-    return {
-        responseData,
-        totals: { totalInitial, totalInitialFormatted, totalFinal, totalFinalFormatted, averageGamePrice, totalPlaytimeHours },
-        playCount: { gameCount, playedCount, unplayedCount },
-    }
-}
+//         return { responseData };
+//     } catch (e) {
+//         console.error(e);
+//         return { message: 'Error' };
+//     }
+// }

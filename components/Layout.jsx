@@ -12,13 +12,13 @@ export default function Layout({ children }) {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta name="author" content="probablyraging" />
 
-                <meta property='og:title' content='Steeeam - Visualize your steam profile' />
+                <meta property='og:title' content='Steeeam - Visualize your Steam profile' />
                 <meta property="og:description" content="Generate a shareable image to brag (or cry) about your Steam collection on Discord and other platforms." />
                 <meta property="og:url" content="https://steeeam.vercel.app" />
                 <meta property="og:type" content="website" />
                 <meta property="og:image" content="/steeeam-og-image.png" />
 
-                <meta name='twitter:title' content='Steeeam - Visualize your steam profile' />
+                <meta name='twitter:title' content='Steeeam - Visualize your Steam profile' />
                 <meta name="twitter:description" content="Generate a shareable image to brag (or cry) about your Steam collection on Discord and other platforms." />
                 <meta name='twitter:card' content='summary_large_image' />
                 <meta name="twitter:image" content="/steeeam-og-image.png" />
