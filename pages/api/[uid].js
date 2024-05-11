@@ -144,6 +144,7 @@ async function createFullCanvas(userData, gameData) {
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
     GlobalFonts.registerFromPath(path.join(process.cwd(), 'public', 'GeistVF.woff2'), 'Geist');
+    GlobalFonts.registerFromPath(path.join(process.cwd(), 'public', 'Elgraine-Black-Italic.ttf'), 'Elgraine');
 
     // Background
     ctx.fillStyle = '#0b0b0b';
@@ -333,6 +334,15 @@ async function createFullCanvas(userData, gameData) {
     const borderRadius = 6;
     createRoundedProgressBar(barwidth, barheight, progress, barColor, backgroundColor, borderRadius);
 
+    // Watermark
+    ctx.globalAlpha = 0.2;
+    const watermarkImage = await loadImage(path.join(process.cwd(), 'public', 'steeeam-canvas.png'));
+    ctx.drawImage(watermarkImage, 2, canvas.height - 37);
+    ctx.fillStyle = '#fff';
+    ctx.font = '16px Elgraine';
+    ctx.fillText('steeeam.vercell.app', 33, canvas.height - 17);
+    ctx.globalAlpha = 1;
+
     // Exp progress bar
     // const playedCountt = gameData.playCount.playedCount.toString();
     // const gameCountt = gameData.totals.totalGames.toString();
@@ -402,7 +412,7 @@ async function createFullCanvas(userData, gameData) {
         ctx.save();
         ctx.beginPath();
         const cornerRadius = newWidth / 2;
-        const x = 40;
+        const x = 35;
         const y = 20;
         ctx.moveTo(x + cornerRadius, y);
         ctx.arcTo(x + newWidth, y, x + newWidth, y + newHeight, cornerRadius);
