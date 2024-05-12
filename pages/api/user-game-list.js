@@ -11,11 +11,7 @@ export default async function POST(req, res) {
 
         const sapi = new SteamAPI(process.env.STEAM_API_KEY);
 
-        const userGames = await sapi.getUserOwnedGames(steamId, { includeExtendedAppInfo: true, includeFreeGames: true, includeFreeSubGames: true, includeUnvettedApps: true })
-            .catch((e) => {
-                console.error('Error getting user games:', e);
-                return res.status(200).json({ error: 'Private games' });
-            });
+        const userGames = await sapi.getUserOwnedGames(steamId, { includeExtendedAppInfo: true, includeFreeGames: true, includeFreeSubGames: true, includeUnvettedApps: true });
 
         return res.status(200).json(userGames);
     } catch (e) {

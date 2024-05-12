@@ -14,11 +14,7 @@ export default async function POST(req, res) {
         const countryCode = req.body.data.countryCode;
         const countryAbbr = req.body.data.countryAbbr;
 
-        const userGames = await sapi.getUserOwnedGames(steamId, { includeExtendedAppInfo: true, includeFreeGames: true, includeFreeSubGames: true, includeUnvettedApps: true })
-            .catch((e) => {
-                console.error('Error getting user games:', e);
-                return res.status(200).json({ error: 'Private games' });
-            });
+        const userGames = await sapi.getUserOwnedGames(steamId, { includeExtendedAppInfo: true, includeFreeGames: true, includeFreeSubGames: true, includeUnvettedApps: true });
 
         // Get appIds and played/unplayed game counts
         let gameIds = [];
@@ -82,6 +78,6 @@ export default async function POST(req, res) {
         return res.status(200).json(responseData);
     } catch (e) {
         console.error(e);
-        return res.status(500).json({ error: 'Unexpected error' });
+        return res.status(200).json({ error: 'Unexpected error' });
     }
 }
