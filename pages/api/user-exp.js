@@ -11,7 +11,11 @@ export default async function POST(req, res) {
 
         const sapi = new SteamAPI(process.env.STEAM_API_KEY);
 
-        const userBadges = await sapi.getUserBadges(steamId);
+        const userBadges = await sapi.getUserBadges(steamId)
+            .catch((e) => {
+                console.error('Error getting user badges:', e);
+                return res.status(200).json({ xpRemaining: 0, requiredXP: 0, level: 0 });
+            });
 
         const requiredXP = SteamLevel.getRequiredXpFromLevel(userBadges.level);
 

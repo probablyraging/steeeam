@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Progress, Skeleton, Spinner } from '@nextui-org/react';
+import { Progress, Skeleton } from '@nextui-org/react';
 
 export default function ExpProgressBar({ steamId }) {
     const [userExp, setUserExp] = useState(null);
