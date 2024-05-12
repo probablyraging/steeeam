@@ -22,19 +22,7 @@ export default function ExpProgressBar({ steamId }) {
         fetchUserExp();
     }, [steamId]);
 
-    if (error) return <PrivateGames steamId={steamId} />;
-
-    if (!userExp) {
-        return (
-            <div className='w-full flex-grow lg:w-fit'>
-                <div className='flex flex-col gap-2'>
-                    <Skeleton className='w-[200px] h-[18px] rounded-full' />
-                    <Skeleton className='w-full h-[14px] rounded-full' />
-                    <Skeleton className='w-[120px] h-[16px] rounded-full' />
-                </div>
-            </div>
-        )
-    }
+    if (!userExp || error) return <PrivateGames steamId={steamId} />;
 
     return (
         <React.Fragment>
