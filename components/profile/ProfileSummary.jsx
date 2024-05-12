@@ -6,6 +6,7 @@ import GameStats from './GameStats';
 import TopGames from './TopGames';
 import PrivateGames from '../PrivateGames';
 import ExpProgressBar from './ExpProgressBar';
+import ShareableImage from './ShareableImage';
 
 export default function ProfileSummary({ steamId, countryCode, countryAbbr, isLoading }) {
     const [gameData, setGameData] = useState(null);
@@ -53,6 +54,10 @@ export default function ProfileSummary({ steamId, countryCode, countryAbbr, isLo
 
             <div className='flex items-start flex-col gap-4'>
                 <TopGames steamId={steamId} countryCode={countryCode} />
+            </div>
+
+            <div className='flex items-start flex-col gap-4'>
+                <ShareableImage />
             </div>
         </React.Fragment>
     )

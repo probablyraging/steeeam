@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { IoGameController } from "react-icons/io5";
 import { Divider, Skeleton } from '@nextui-org/react';
 import GameDetails from './GameDetails';
 
 export default function TopGames({ steamId, countryCode }) {
-    const router = useRouter();
-    const { uid } = router.query;
     const [gameList, setGameList] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
 

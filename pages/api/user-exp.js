@@ -23,7 +23,7 @@ export default async function POST(req, res) {
 
         return res.status(200).json(responseData);
     } catch (e) {
-        console.error('Error getting user badges:', e);
-        return res.status(200).json({ error: 'Unexpected error' });
+        console.error(e);
+        return res.status(500).json('Unexpected error');
     }
 }

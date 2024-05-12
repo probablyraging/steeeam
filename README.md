@@ -39,7 +39,7 @@ Use it directly on GitHub or other places that accept markdown by copy/pasting t
 ```
 
 # Customize your card
-Personalize every aspect of your card to show off your personality by appending any of the options below, or use the pre-made `light` and `dark` themes for your convenience.
+Personalize every aspect of your card by appending any of the options below, or use the pre-made `light` and `dark` themes for your convenience.
 
 ### Examples
 ```

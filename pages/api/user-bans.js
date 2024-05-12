@@ -15,6 +15,6 @@ export default async function POST(req, res) {
         return res.status(200).json(userBans);
     } catch (e) {
         console.error(e);
-        return res.status(500).json({ error: 'Unexpected error' });
+        return res.status(500).json('Unexpected error');
     }
 }
