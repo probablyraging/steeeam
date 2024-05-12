@@ -2,12 +2,8 @@ import SteamAPI from 'steamapi';
 import SteamLevel from 'steam-level';
 
 export default async function POST(req, res) {
-    if (req.headers.authorization.split(' ')[1] !== process.env.INTERNAL_API_KEY) {
-        return res.status(403).json({ error: 'Forbidden' });
-    }
-
     try {
-        const steamId = req.body.data.steamId;
+        const steamId = req.body.steamId;
 
         const sapi = new SteamAPI(process.env.STEAM_API_KEY);
 

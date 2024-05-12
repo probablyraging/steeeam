@@ -1,28 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { Progress, Skeleton } from '@nextui-org/react';
-import PrivateGames from '../PrivateGames';
 
 export default function ExpProgressBar({ steamId }) {
     const [userExp, setUserExp] = useState(null);
-    const [error, setError] = useState(false);
 
     useEffect(() => {
         if (!steamId) return;
         async function fetchUserExp() {
-            const userExpResponse = await fetch(`/api/route`, {
+            const userExpResponse = await fetch(`/api/user-exp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ route: 'user-exp', steamId: steamId }),
+                body: JSON.stringify({ steamId: steamId }),
             }).then(res => res.json());
-            if (userExpResponse.error) {
-                return setError(true);
-            }
             setUserExp(userExpResponse);
         }
         fetchUserExp();
     }, [steamId]);
 
-    if (!userExp || error) return <PrivateGames steamId={steamId} />;
+    if (!userExp) {
+        return (
+            <div className='w-full flex-grow lg:w-fit'>
+                <div className='flex flex-col gap-2'>
+                    <Skeleton className='w-[200px] h-[18px] rounded-full' />
+                    <Skeleton className='w-full h-[14px] rounded-full' />
+                    <Skeleton className='w-[120px] h-[16px] rounded-full' />
+                </div>
+            </div>
+        )
+    }
 
     return (
         <React.Fragment>
