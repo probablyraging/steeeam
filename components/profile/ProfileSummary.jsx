@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Divider } from '@nextui-org/react';
 import AccountValue from './AccountValue';
 import SearchInput from './SearchInput';
 import GameProgressBar from './GameProgressBar';
