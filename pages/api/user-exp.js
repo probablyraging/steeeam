@@ -20,9 +20,9 @@ export default async function POST(req, res) {
         const requiredXP = SteamLevel.getRequiredXpFromLevel(userBadges.level);
 
         const responseData = {
-            xpRemaining: userBadges.xpRemaining,
+            xpRemaining: userBadges?.xpRemaining || 0,
             requiredXP: requiredXP,
-            level: userBadges.level
+            level: userBadges?.level || 0
         };
 
         return res.status(200).json(responseData);
