@@ -214,6 +214,15 @@ async function createFullCanvas(
     ctx.fillStyle = `#${bg_color}`;
     ctx.fillRect(0, 0, width, height);
 
+    // Watermark
+    ctx.globalAlpha = 0.4;
+    const watermarkImage = await loadImage(path.join(process.cwd(), 'public', 'canvas', 'steeeam-canvas.png'));
+    ctx.drawImage(watermarkImage, canvas.width - 180, canvas.height - 32);
+    ctx.fillStyle = '#737373';
+    ctx.font = '16px Ubuntu';
+    ctx.fillText('steeeam.vercel.app', canvas.width - 155, canvas.height - 17);
+    ctx.globalAlpha = 1;
+
     // Username (truncated if too long)
     ctx.fillStyle = `#${username_color}`;
     ctx.font = '700 20px Geist';
@@ -364,7 +373,7 @@ async function createFullCanvas(
         ctx.fillText(`${progressPercent}%`, 405, 324);
     }
 
-    function createRoundedProgressBar(barwidth, barheight, progress, barColor, backgroundColor, borderRadius) {
+    async function createRoundedProgressBar(barwidth, barheight, progress, barColor, backgroundColor, borderRadius) {
         if (isNaN(progress)) return;
         ctx.fillStyle = backgroundColor;
         roundRect(ctx, 215, 330, barwidth, barheight, borderRadius, true, false);
@@ -373,7 +382,7 @@ async function createFullCanvas(
         roundRect(ctx, 215, 330, barWidth, barheight, borderRadius, true, true);
     }
 
-    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+    async function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
         if (typeof stroke === 'undefined') {
             stroke = true;
         }
@@ -404,16 +413,7 @@ async function createFullCanvas(
     const barColor = `#${progbar_color}`;
     const backgroundColor = `#${progbar_bg}`;
     const borderRadius = 6;
-    createRoundedProgressBar(barwidth, barheight, progress, barColor, backgroundColor, borderRadius);
-
-    // Watermark
-    ctx.globalAlpha = 0.4;
-    const watermarkImage = await loadImage(path.join(process.cwd(), 'public', 'canvas', 'steeeam-canvas.png'));
-    ctx.drawImage(watermarkImage, canvas.width - 180, canvas.height - 32);
-    ctx.fillStyle = '#737373';
-    ctx.font = '16px Ubuntu';
-    ctx.fillText('steeeam.vercel.app', canvas.width - 155, canvas.height - 17);
-    ctx.globalAlpha = 1;
+    await createRoundedProgressBar(barwidth, barheight, progress, barColor, backgroundColor, borderRadius);
 
     // Exp progress bar
     // const playedCountt = gameData.playCount.playedCount.toString();
