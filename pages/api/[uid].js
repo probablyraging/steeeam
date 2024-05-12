@@ -111,33 +111,87 @@ async function getGameData(uid) {
 }
 
 export default async function handler(req, res) {
-    const { uid } = req.query;
+    const {
+        uid,
+        bg_color,
+        title_color,
+        sub_title_color,
+        text_color,
+        cp_color,
+        ip_color,
+        div_color,
+        border_color,
+        border_width,
+        progbar_bg,
+        progbar_color,
+        hide_border,
+        theme
+    } = req.query;
 
     let canvasBuffer;
 
     const userData = await getUserData(uid);
     const gameData = await getGameData(uid);
 
-    if (gameData.message === 'Private games') {
-        canvasBuffer = await createPartialCanvas(userData);
-    } else {
-        canvasBuffer = await createFullCanvas(userData, gameData);
-    }
+    canvasBuffer = await createFullCanvas(
+        userData,
+        gameData,
+        bg_color,
+        title_color,
+        sub_title_color,
+        text_color,
+        cp_color,
+        ip_color,
+        div_color,
+        border_color,
+        border_width,
+        progbar_bg,
+        progbar_color,
+        hide_border,
+        theme
+    );
 
     res.setHeader('Content-Type', 'image/png');
     res.status(200).send(canvasBuffer);
 }
 
+async function createFullCanvas(
+    userData,
+    gameData,
+    bg_color = '0b0b0b',
+    title_color = 'fff',
+    sub_title_color = 'adadad',
+    text_color = 'fff',
+    cp_color = 'f87171',
+    ip_color = '4ade80',
+    div_color = 'ffffff30',
+    border_color = 'ffffff30',
+    border_width = 1,
+    progbar_bg = '313131',
+    progbar_color = '006fee',
+    hide_border = false,
+    theme
+) {
+    // Themes
+    // Dark
+    if (theme === 'dark') bg_color = `0b0b0b`;
+    if (theme === 'dark') title_color = `fff`;
+    if (theme === 'dark') sub_title_color = `adadad`;
+    if (theme === 'dark') text_color = `fff`;
+    if (theme === 'dark') div_color = `ffffff30`;
+    if (theme === 'dark') border_color = `ffffff30`;
+    if (theme === 'dark') progbar_bg = `ffffff30`;
+    if (theme === 'dark') progbar_color = `006fee`;
+    // Light
+    if (theme === 'light') bg_color = `fff`;
+    if (theme === 'light') title_color = `000`;
+    if (theme === 'light') sub_title_color = `000`;
+    if (theme === 'light') text_color = `000`;
+    if (theme === 'light') div_color = `00000030`;
+    if (theme === 'light') border_color = `00000030`;
+    if (theme === 'light') progbar_bg = `00000050`;
+    if (theme === 'light') progbar_color = `60a5fa`;
 
-
-
-
-
-
-
-
-
-async function createFullCanvas(userData, gameData) {
     // Canvas
     const width = 705;
     const height = 385;
@@ -147,11 +201,11 @@ async function createFullCanvas(userData, gameData) {
     GlobalFonts.registerFromPath(path.join(process.cwd(), 'public', 'Elgraine-Black-Italic.ttf'), 'Elgraine');
 
     // Background
-    ctx.fillStyle = '#0b0b0b';
+    ctx.fillStyle = `#${bg_color}`;
     ctx.fillRect(0, 0, width, height);
 
     // Username (truncated if too long)
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = `#${text_color}`;
     ctx.font = '700 20px Geist';
     let username = userData.personaName;
     const usernameWidth = ctx.measureText(username).width;
@@ -175,49 +229,52 @@ async function createFullCanvas(userData, gameData) {
     ctx.fillStyle = '#adadad';
     ctx.font = '10px Geist';
     const steamId = userData.steamId;
-    ctx.fillText(steamId, 20, 200);
+    ctx.fillText(steamId, 20, 195);
 
     // Location
-    const locIcon = await loadImage(path.join(process.cwd(), 'public', 'loc-icon.png'));
+    const locIcon = await loadImage(path.join(process.cwd(), 'public', 'canvas', 'loc-icon.png'));
     ctx.drawImage(locIcon, 20, 220);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = `#${text_color}`;
     ctx.font = '12px Geist';
     let location = userData.location || 'Unknown';
     if (location.length > 22) location = location.slice(0, 22) + '...';
-    ctx.fillText(location, 43, 234);
+    ctx.fillText(location, 43, 232);
 
     // Last seen
-    const seenIcon = await loadImage(path.join(process.cwd(), 'public', 'seen-icon.png'));
+    const seenIcon = await loadImage(path.join(process.cwd(), 'public', 'canvas', 'seen-icon.png'));
     ctx.drawImage(seenIcon, 20, 245);
+    ctx.fillStyle = `#${text_color}`;
     ctx.font = '12px Geist';
     const lastSeen = `Last seen ${userData.lastLogOff ? moment.unix(userData.lastLogOff).fromNow() : 'never'}`;
-    ctx.fillText(lastSeen, 43, 259);
+    ctx.fillText(lastSeen, 43, 257);
 
     // Created at
-    const joinIcon = await loadImage(path.join(process.cwd(), 'public', 'join-icon.png'));
+    const joinIcon = await loadImage(path.join(process.cwd(), 'public', 'canvas', 'join-icon.png'));
     ctx.drawImage(joinIcon, 20, 270);
+    ctx.fillStyle = `#${text_color}`;
     ctx.font = '12px Geist';
     const createdAt = `${userData.createdAt ? `Joined ${getRelativeTimeImprecise(userData.createdAt)} ago` : 'Unknown'}`;
-    ctx.fillText(createdAt, 43, 284);
+    ctx.fillText(createdAt, 43, 283);
 
     // Vertical divider
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#ffffff30';
+    ctx.strokeStyle = `#${div_color}`;
     ctx.beginPath();
     ctx.moveTo(200, 15);
     ctx.lineTo(200, canvas.height - 15);
     ctx.stroke();
 
     // Account stats header
-    const gameStatsIcon = await loadImage(path.join(process.cwd(), 'public', 'game-stats-icon.png'));
+    const gameStatsIcon = await loadImage(path.join(process.cwd(), 'public', 'canvas', 'game-stats-icon.png'));
     ctx.drawImage(gameStatsIcon, 215, 20);
+    ctx.fillStyle = `#${title_color}`;
     ctx.font = '600 16px Geist';
     const gameStatsHeader = 'Account Statistics';
     ctx.fillText(gameStatsHeader, 245, 37);
 
     // Horizontal divider
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#ffffff30';
+    ctx.strokeStyle = `#${div_color}`;
     ctx.beginPath();
     ctx.moveTo(215, 50);
     ctx.lineTo(canvas.width - 15, 50);
@@ -225,54 +282,54 @@ async function createFullCanvas(userData, gameData) {
 
     // Account value
     // Current
-    ctx.fillStyle = '#adadad';
+    ctx.fillStyle = `#${sub_title_color}`;
     ctx.font = '16px Geist';
     ctx.fillText('Current Price', 215, 80);
-    ctx.fillStyle = '#f87171';
+    ctx.fillStyle = `#${cp_color}`;
     ctx.font = '600 26px Geist';
     ctx.fillText(`${gameData.totals?.totalFinalFormatted || '$0'}`, 215, 110);
     //Initial
-    ctx.fillStyle = '#adadad';
+    ctx.fillStyle = `#${sub_title_color}`;
     ctx.font = '16px Geist';
     ctx.fillText('Initial Price', 370, 80);
-    ctx.fillStyle = '#4ade80';
+    ctx.fillStyle = `#${ip_color}`;
     ctx.font = '600 26px Geist';
     ctx.fillText(`${gameData.totals?.totalInitialFormatted || '$0'}`, 370, 110);
 
     // Game stats
     // Total games
-    ctx.fillStyle = '#adadad';
+    ctx.fillStyle = `#${sub_title_color}`;
     ctx.font = '16px Geist';
     ctx.fillText('Total Games', 215, 160);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = `#${text_color}`;
     ctx.font = '600 26px Geist';
     ctx.fillText(`${gameData.totals?.totalGames || '0'}`, 215, 190);
     // Average price
-    ctx.fillStyle = '#adadad';
+    ctx.fillStyle = `#${sub_title_color}`;
     ctx.font = '16px Geist';
     ctx.fillText('Avg. Price', 370, 160);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = `#${text_color}`;
     ctx.font = '600 26px Geist';
     ctx.fillText(`${gameData.totals?.averageGamePrice || '$0'}`, 370, 190);
     // Price per hour
-    ctx.fillStyle = '#adadad';
+    ctx.fillStyle = `#${sub_title_color}`;
     ctx.font = '16px Geist';
     ctx.fillText('Price Per Hour', 510, 160);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = `#${text_color}`;
     ctx.font = '600 26px Geist';
     ctx.fillText(`${pricePerHour(gameData.totals.totalFinalFormatted, gameData.totals.totalPlaytimeHours) || '0'}`, 510, 190);
     // Average playtime
-    ctx.fillStyle = '#adadad';
+    ctx.fillStyle = `#${sub_title_color}`;
     ctx.font = '16px Geist';
     ctx.fillText('Avg, Playtime', 215, 240);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = `#${text_color}`;
     ctx.font = '600 26px Geist';
     ctx.fillText(`${gameData.totals.averagePlaytime || '0'}`, 215, 270);
     // Total playtime
-    ctx.fillStyle = '#adadad';
+    ctx.fillStyle = `#${sub_title_color}`;
     ctx.font = '16px Geist';
     ctx.fillText('Avg, Playtime', 370, 240);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = `#${text_color}`;
     ctx.font = '600 26px Geist';
     ctx.fillText(`${gameData.totals?.totalPlaytimeHours || '0'}h`, 370, 270);
 
@@ -282,13 +339,13 @@ async function createFullCanvas(userData, gameData) {
     ctx.fillStyle = '#60a5fa';
     ctx.font = 'bold 14px Ubuntu';
     ctx.fillText(playedCount, 215, 324);
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = `#${text_color}`;
     ctx.font = 'bold 14px Ubuntu';
     ctx.fillText(`/`, (ctx.measureText(playedCount).width + 215) + 5, 324);
     ctx.fillStyle = '#60a5fa';
     ctx.font = 'bold 14px Ubuntu';
     ctx.fillText(gameCount, (ctx.measureText(playedCount).width + 215) + 15, 324);
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = `#${text_color}`;
     ctx.font = 'bold 14px Ubuntu';
     ctx.fillText(`games played`, (ctx.measureText(playedCount).width + ctx.measureText(gameCount).width) + 215 + 20, 324);
     ctx.fillText(`${((parseInt(playedCount) / parseInt(gameCount)) * 100).toFixed(0)}%`, 405, 324);
@@ -329,18 +386,18 @@ async function createFullCanvas(userData, gameData) {
     const barwidth = 220;
     const barheight = 12;
     const progress = (parseInt(playedCount) / parseInt(gameCount)) * 100;
-    const barColor = '#006fee';
-    const backgroundColor = '#313131';
+    const barColor = `#${progbar_color}`;
+    const backgroundColor = `#${progbar_bg}`;
     const borderRadius = 6;
     createRoundedProgressBar(barwidth, barheight, progress, barColor, backgroundColor, borderRadius);
 
     // Watermark
-    ctx.globalAlpha = 0.2;
-    const watermarkImage = await loadImage(path.join(process.cwd(), 'public', 'steeeam-canvas.png'));
-    ctx.drawImage(watermarkImage, 2, canvas.height - 37);
-    ctx.fillStyle = '#fff';
-    ctx.font = '16px Elgraine';
-    ctx.fillText('steeeam.vercell.app', 33, canvas.height - 17);
+    ctx.globalAlpha = 0.4;
+    const watermarkImage = await loadImage(path.join(process.cwd(), 'public', 'canvas', 'steeeam-canvas.png'));
+    ctx.drawImage(watermarkImage, canvas.width - 180, canvas.height - 32);
+    ctx.fillStyle = '#737373';
+    ctx.font = '16px Ubuntu';
+    ctx.fillText('steeeam.vercel.app', canvas.width - 155, canvas.height - 17);
     ctx.globalAlpha = 1;
 
     // Exp progress bar
@@ -425,6 +482,13 @@ async function createFullCanvas(userData, gameData) {
         ctx.restore();
     }
     await drawCenteredRoundedImage();
+
+    // Draw border
+    if (hide_border !== 'true') {
+        ctx.strokeStyle = `#${border_color}`;
+        ctx.lineWidth = parseInt(border_width >= 5 ? 5 : border_width);
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+    }
 
     const buffer = canvas.toBuffer('image/png');
     return buffer;
