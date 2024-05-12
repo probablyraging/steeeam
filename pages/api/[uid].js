@@ -117,6 +117,8 @@ export default async function handler(req, res) {
         title_color,
         sub_title_color,
         text_color,
+        username_color,
+        id_color,
         cp_color,
         ip_color,
         div_color,
@@ -140,6 +142,8 @@ export default async function handler(req, res) {
         title_color,
         sub_title_color,
         text_color,
+        username_color,
+        id_color,
         cp_color,
         ip_color,
         div_color,
@@ -162,6 +166,8 @@ async function createFullCanvas(
     title_color = 'fff',
     sub_title_color = 'adadad',
     text_color = 'fff',
+    username_color = 'fff',
+    id_color = 'adadad',
     cp_color = 'f87171',
     ip_color = '4ade80',
     div_color = 'ffffff30',
@@ -178,6 +184,8 @@ async function createFullCanvas(
     if (theme === 'dark') title_color = `fff`;
     if (theme === 'dark') sub_title_color = `adadad`;
     if (theme === 'dark') text_color = `fff`;
+    if (theme === 'dark') username_color = `fff`;
+    if (theme === 'dark') id_color = `adadad`;
     if (theme === 'dark') div_color = `ffffff30`;
     if (theme === 'dark') border_color = `ffffff30`;
     if (theme === 'dark') progbar_bg = `ffffff30`;
@@ -187,6 +195,8 @@ async function createFullCanvas(
     if (theme === 'light') title_color = `000`;
     if (theme === 'light') sub_title_color = `000`;
     if (theme === 'light') text_color = `000`;
+    if (theme === 'light') username_color = `000`;
+    if (theme === 'light') id_color = `adadad`;
     if (theme === 'light') div_color = `00000030`;
     if (theme === 'light') border_color = `00000030`;
     if (theme === 'light') progbar_bg = `00000050`;
@@ -205,7 +215,7 @@ async function createFullCanvas(
     ctx.fillRect(0, 0, width, height);
 
     // Username (truncated if too long)
-    ctx.fillStyle = `#${text_color}`;
+    ctx.fillStyle = `#${username_color}`;
     ctx.font = '700 20px Geist';
     let username = userData.personaName;
     const usernameWidth = ctx.measureText(username).width;
@@ -226,7 +236,7 @@ async function createFullCanvas(
     }
 
     // SteamID
-    ctx.fillStyle = '#adadad';
+    ctx.fillStyle = `#${id_color}`;
     ctx.font = '10px Geist';
     const steamId = userData.steamId;
     ctx.fillText(steamId, 20, 195);
@@ -317,14 +327,14 @@ async function createFullCanvas(
     ctx.fillText('Price Per Hour', 510, 160);
     ctx.fillStyle = `#${text_color}`;
     ctx.font = '600 26px Geist';
-    ctx.fillText(`${pricePerHour(gameData.totals.totalFinalFormatted, gameData.totals.totalPlaytimeHours) || '0'}`, 510, 190);
+    ctx.fillText(`${pricePerHour(gameData.totals?.totalFinalFormatted, gameData.totals?.totalPlaytimeHours) || '0'}`, 510, 190);
     // Average playtime
     ctx.fillStyle = `#${sub_title_color}`;
     ctx.font = '16px Geist';
     ctx.fillText('Avg, Playtime', 215, 240);
     ctx.fillStyle = `#${text_color}`;
     ctx.font = '600 26px Geist';
-    ctx.fillText(`${gameData.totals.averagePlaytime || '0'}`, 215, 270);
+    ctx.fillText(`${gameData.totals?.averagePlaytime || '0'}`, 215, 270);
     // Total playtime
     ctx.fillStyle = `#${sub_title_color}`;
     ctx.font = '16px Geist';
@@ -336,21 +346,26 @@ async function createFullCanvas(
     // Game progress bar
     const playedCount = gameData.playCount?.playedCount.toString() || '0';
     const gameCount = gameData.totals?.totalGames.toString() || '0';
-    ctx.fillStyle = '#60a5fa';
-    ctx.font = 'bold 14px Ubuntu';
-    ctx.fillText(playedCount, 215, 324);
-    ctx.fillStyle = `#${text_color}`;
-    ctx.font = 'bold 14px Ubuntu';
-    ctx.fillText(`/`, (ctx.measureText(playedCount).width + 215) + 5, 324);
-    ctx.fillStyle = '#60a5fa';
-    ctx.font = 'bold 14px Ubuntu';
-    ctx.fillText(gameCount, (ctx.measureText(playedCount).width + 215) + 15, 324);
-    ctx.fillStyle = `#${text_color}`;
-    ctx.font = 'bold 14px Ubuntu';
-    ctx.fillText(`games played`, (ctx.measureText(playedCount).width + ctx.measureText(gameCount).width) + 215 + 20, 324);
-    ctx.fillText(`${((parseInt(playedCount) / parseInt(gameCount)) * 100).toFixed(0)}%`, 405, 324);
+    const progressPercent = ((parseInt(playedCount) / parseInt(gameCount)) * 100).toFixed(0);
+    if (!isNaN(progressPercent)) {
+        ctx.fillStyle = `#${progbar_color}`;
+        ctx.font = '700 14px Ubuntu';
+        ctx.fillText(playedCount, 215, 324);
+        ctx.fillStyle = `#${text_color}`;
+        ctx.font = '14px Ubuntu';
+        ctx.fillText(`/`, (ctx.measureText(playedCount).width + 215) + 5, 324);
+        ctx.fillStyle = `#${progbar_color}`;
+        ctx.font = '700 14px Ubuntu';
+        ctx.fillText(gameCount, (ctx.measureText(playedCount).width + 215) + 15, 324);
+        ctx.fillStyle = `#${text_color}`;
+        ctx.font = '14px Ubuntu';
+        ctx.fillText(`games played`, (ctx.measureText(playedCount).width + ctx.measureText(gameCount).width) + 215 + 20, 324);
+        ctx.font = '700 14px Ubuntu';
+        ctx.fillText(`${progressPercent}%`, 405, 324);
+    }
 
     function createRoundedProgressBar(barwidth, barheight, progress, barColor, backgroundColor, borderRadius) {
+        if (isNaN(progress)) return;
         ctx.fillStyle = backgroundColor;
         roundRect(ctx, 215, 330, barwidth, barheight, borderRadius, true, false);
         const barWidth = Math.floor(barwidth * (progress / 100));
@@ -486,7 +501,7 @@ async function createFullCanvas(
     // Draw border
     if (hide_border !== 'true') {
         ctx.strokeStyle = `#${border_color}`;
-        ctx.lineWidth = parseInt(border_width >= 5 ? 5 : border_width);
+        ctx.lineWidth = parseInt(border_width >= 10 ? 10 : border_width);
         ctx.strokeRect(0, 0, canvas.width, canvas.height);
     }
 

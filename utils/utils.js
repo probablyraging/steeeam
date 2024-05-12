@@ -87,7 +87,7 @@ export function getMinByProperty(data, property) {
 
 export function pricePerHour(totalCost, totalPlaytime, countryAbbr) {
     const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: countryAbbr ? countryAbbr : 'USD' });
-    if (totalPlaytime === '0') return formatter.format(0);
+    if (!totalPlaytime || totalPlaytime === '0') return formatter.format(0);
     const totalCostFloat = parseInt(totalCost.replace(/[^\d.-]/g, ''), 10) * 100;
     const totalCostFormatted = (totalCostFloat / 100).toFixed();
     const totalPlaytimeFormatted = totalPlaytime.replace(',', '');
