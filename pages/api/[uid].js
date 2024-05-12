@@ -216,11 +216,11 @@ async function createFullCanvas(
 
     // Watermark
     ctx.globalAlpha = 0.4;
+    ctx.fillStyle = '#737373';
+    ctx.font = '16px Geist';
+    ctx.fillText('steeeam.vercel.app', canvas.width - 155, canvas.height - 17);
     const watermarkImage = await loadImage(path.join(process.cwd(), 'public', 'canvas', 'steeeam-canvas.png'));
     ctx.drawImage(watermarkImage, canvas.width - 180, canvas.height - 32);
-    ctx.fillStyle = '#737373';
-    ctx.font = '16px Ubuntu';
-    ctx.fillText('steeeam.vercel.app', canvas.width - 155, canvas.height - 17);
     ctx.globalAlpha = 1;
 
     // Username (truncated if too long)
@@ -358,18 +358,18 @@ async function createFullCanvas(
     const progressPercent = ((parseInt(playedCount) / parseInt(gameCount)) * 100).toFixed(0);
     if (!isNaN(progressPercent)) {
         ctx.fillStyle = `#${progbar_color}`;
-        ctx.font = '700 14px Ubuntu';
+        ctx.font = '700 14px Geist';
         ctx.fillText(playedCount, 215, 324);
         ctx.fillStyle = `#${text_color}`;
-        ctx.font = '14px Ubuntu';
+        ctx.font = '14px Geist';
         ctx.fillText(`/`, (ctx.measureText(playedCount).width + 215) + 5, 324);
         ctx.fillStyle = `#${progbar_color}`;
-        ctx.font = '700 14px Ubuntu';
+        ctx.font = '700 14px Geist';
         ctx.fillText(gameCount, (ctx.measureText(playedCount).width + 215) + 15, 324);
         ctx.fillStyle = `#${text_color}`;
-        ctx.font = '14px Ubuntu';
+        ctx.font = '14px Geist';
         ctx.fillText(`games played`, (ctx.measureText(playedCount).width + ctx.measureText(gameCount).width) + 215 + 20, 324);
-        ctx.font = '700 14px Ubuntu';
+        ctx.font = '700 14px Geist';
         ctx.fillText(`${progressPercent}%`, 405, 324);
     }
 
