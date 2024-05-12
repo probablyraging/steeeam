@@ -14,7 +14,7 @@ export default async function POST(req, res) {
         const userBadges = await sapi.getUserBadges(steamId)
             .catch((e) => {
                 console.error('Error getting user badges:', e);
-                return res.status(200).json({ xpRemaining: 0, requiredXP: 0, level: 0 });
+                return res.status(200).json({ error: 'Private games' });
             });
 
         const requiredXP = SteamLevel.getRequiredXpFromLevel(userBadges.level);

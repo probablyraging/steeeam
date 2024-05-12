@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Progress, Skeleton } from '@nextui-org/react';
+import PrivateGames from '../PrivateGames';
 
 export default function ExpProgressBar({ steamId }) {
     const [userExp, setUserExp] = useState(null);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         if (!steamId) return;
@@ -12,10 +14,15 @@ export default function ExpProgressBar({ steamId }) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ route: 'user-exp', steamId: steamId }),
             }).then(res => res.json());
+            if (userExpResponse.error) {
+                return setError(true);
+            }
             setUserExp(userExpResponse);
         }
         fetchUserExp();
     }, [steamId]);
+
+    if (error) return <PrivateGames steamId={steamId} />;
 
     if (!userExp) {
         return (
