@@ -17,7 +17,7 @@ export default async function POST(req, res) {
                 return res.status(200).json({ error: 'Private games' });
             });
 
-        const requiredXP = SteamLevel.getRequiredXpFromLevel(userBadges.level);
+        const requiredXP = SteamLevel.getRequiredXpFromLevel(userBadges?.level || 0);
 
         const responseData = {
             xpRemaining: userBadges?.xpRemaining || 0,
