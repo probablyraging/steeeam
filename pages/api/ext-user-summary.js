@@ -10,7 +10,17 @@ export default async function handler(req, res) {
 
             const userSummary = await sapi.getUserSummary(steamId);
 
-            res.status(200).json({ data: userSummary });
+            return res.status(200).json({
+                steamId: steamId,
+                personaName: userSummary.nickname,
+                visible: userSummary.visible,
+                avatar: userSummary.avatar.large,
+                customURL: userSummary.url,
+                lastLogOff: userSummary.lastLogOffTimestamp,
+                createdAt: userSummary.createdTimestamp,
+                countryCode: userSummary.countryCode,
+                stateCode: userSummary.stateCode,
+            });
         } catch (e) {
             res.status(500).json({ error: 'Internal Server Error' });
         }
