@@ -28,7 +28,6 @@ export default async function handler(req, res) {
                 }
             }
         } else {
-            console.error(e);
             return res.status(500).json('Unexpected error');
         }
     }
