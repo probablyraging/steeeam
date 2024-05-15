@@ -1,0 +1,26 @@
+{
+    "version": 3,
+    "rewrites": [],
+    "routes": [],
+    "builds": [],
+    "env": {},
+    "framework": {
+        "name": "next.js",
+        "options": {
+            "rewrites": [],
+            "buildCommand": "next build",
+            "outputDirectory": ".next"
+        }
+    },
+    "headers": [
+        {
+            "source": "/api/:path*",
+            "headers": [
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "http://localhost:3001"
+                }
+            ]
+        }
+    ]
+}

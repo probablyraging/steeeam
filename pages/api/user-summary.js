@@ -16,6 +16,10 @@ function sidToShortURL(sid) {
 }
 
 export default async function POST(req, res) {
+    if (req.headers.authorization.split(' ')[1] !== process.env.INTERNAL_API_KEY) {
+        return res.status(403).json({ error: 'Forbidden' });
+    }
+
     try {
         const steamId = await resolveVanityUrl(req.body.data.uid);
 
