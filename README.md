@@ -4,22 +4,22 @@
  <p align="center">Calculate your game library value, total playtime, average game cost, and more. Dynamically generate a shareable card to brag (or cry) about your collection on Discord, GitHub, and other platforms.</p>
 </p>
   <p align="center">
-    <a href="https://github.com/anuraghazra/github-readme-stats/graphs/contributors">
+    <a href="https://github.com/probablyraging/steeeam/graphs/contributors">
       <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/probablyraging/steeeam" />
     </a>
-    <a href="https://github.com/anuraghazra/github-readme-stats/issues">
+    <a href="https://github.com/probablyraging/steeeam/issues">
       <img alt="Issues" src="https://img.shields.io/github/issues/probablyraging/steeeam?color=0088ff" />
     </a>
-    <a href="https://github.com/anuraghazra/github-readme-stats/pulls">
+    <a href="https://github.com/probablyraging/steeeam/pulls">
       <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/probablyraging/steeeam?color=0088ff" />
     </a>
-    <a href="https://securityscorecards.dev/viewer/?uri=github.com/anuraghazra/github-readme-stats">
+    <a href="https://securityscorecards.dev/viewer/?uri=github.com/probablyraging/steeeam">
       <img alt="OpenSSF Scorecard" src="https://api.securityscorecards.dev/projects/github.com/probablyraging/steeeam/badge" />
     </a>
     <br />
     <br />
-    <a href="https://vercel.com?utm\_source=github\_readme\_stats\_team\&utm\_campaign=oss">
-      <img src="https://raw.githubusercontent.com/anuraghazra/github-readme-stats/master/powered-by-vercel.svg"/>
+    <a href="https://vercel.com">
+      <img src="https://raw.githubusercontent.com/probablyraging/steeeam/master/powered-by-vercel.svg"/>
     </a>
   </p>
 
