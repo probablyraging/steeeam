@@ -32,7 +32,7 @@ export default function AccountValue({ totals }) {
                                     </Skeleton>
                                 </div>
                             </Tooltip>
-                            <Tooltip closeDelay={0} className='bg-tooltip' content='Based on game prices as of a few seconds ago'>
+                            <Tooltip closeDelay={0} className='bg-tooltip' content='Based on game prices at time of release'>
                                 <div className='flex items-center flex-col lg:items-start'>
                                     <p className='text-md text-dull font-medium sm:text-lg'>
                                         Initial Price
