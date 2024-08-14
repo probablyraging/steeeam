@@ -18,7 +18,7 @@ export default async function POST(req, res) {
             });
 
             const html = response.data;
-            const regex = /<span class="progress_info_bold">(\d+) card drops remaining<\/span>/;
+            const regex = /<span class="progress_info_bold">(\d+)\s+card\s+drop(?:s)?\s+remaining<\/span>/i;
             const match = html.match(regex);
 
             if (match && match[1]) {
