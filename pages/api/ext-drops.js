@@ -19,13 +19,19 @@ export default async function POST(req, res) {
 
             const html = response.data;
             const regex = /<span class="progress_info_bold">(\d+)\s+card\s+drop(?:s)?\s+remaining<\/span>/i;
+            const noDropsRegex = /<span class="progress_info_bold">No\s+card\s+drops\s+remaining<\/span>/i;
+
+            if (noDropsRegex.test(html)) {
+                return res.status(200).json({ remaining: 0 });
+            }
+
             const match = html.match(regex);
 
             if (match && match[1]) {
                 const cardDropsRemaining = parseInt(match[1], 10);
                 return res.status(200).json({ remaining: cardDropsRemaining });
             } else {
-                return res.status(500).json({ error: 'Card drops data not found' });
+                return res.status(200).json({ error: 'Card drops data not found' });
             }
         } catch (e) {
             res.status(500).json({ error: 'Internal Server Error' });
