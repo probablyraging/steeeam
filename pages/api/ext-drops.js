@@ -25,7 +25,7 @@ export default async function POST(req, res) {
                 const cardDropsRemaining = parseInt(match[1], 10);
                 return res.status(200).json({ remaining: cardDropsRemaining });
             } else {
-                return res.status(200).json({ error: 'Card drops data not found' });
+                return res.status(500).json({ error: 'Card drops data not found' });
             }
         } catch (e) {
             res.status(500).json({ error: 'Internal Server Error' });
