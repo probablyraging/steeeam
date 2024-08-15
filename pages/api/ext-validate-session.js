@@ -17,12 +17,12 @@ export default async function POST(req, res) {
 
             const html = response.data;
             const regex = /sign out/gi;
-            const regexTwo = /<a\s+href="https:\/\/steamcommunity\.com\/id\/[^"]*"\s+data-miniprofile="\d+">([^<]+)<\/a>/i;
+            const regexTwo = /<a\s+href="https:\/\/steamcommunity\.com\/(id|profiles)\/[^"]*"\s+data-miniprofile="\d+">([^<]+)<\/a>/i;
             const match = html.match(regex);
             const steamUser = html.match(regexTwo);
 
-            if (match && match[0] && steamUser[1]) {
-                return res.status(200).json({ steamUser: steamUser[1] });
+            if (match && match[0] && steamUser[2]) {
+                return res.status(200).json({ steamUser: steamUser[2] });
             } else {
                 return res.status(500).json({ error: 'Not logged in' });
             }
