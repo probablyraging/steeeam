@@ -42,6 +42,12 @@ export default function ShareableImage() {
                     </div>
 
                     <div className='w-full lg:max-w-[50%]'>
+                        <Link href={`https://steeeam.vercel.app/api/${uid}`} target='_blank'>
+                            <img src={`https://steeeam.vercel.app/api/${uid}`} />
+                        </Link>
+                    </div>
+
+                    <div className='w-full lg:max-w-[50%]'>
                         <Accordion
                             isCompact
                             itemClasses={{

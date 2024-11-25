@@ -340,14 +340,14 @@ async function createFullCanvas(
     // Average playtime
     ctx.fillStyle = `#${sub_title_color}`;
     ctx.font = '16px Geist';
-    ctx.fillText('Avg, Playtime', 215, 240);
+    ctx.fillText('Avg. Playtime', 215, 240);
     ctx.fillStyle = `#${text_color}`;
     ctx.font = '600 26px Geist';
-    ctx.fillText(`${gameData.totals?.averagePlaytime || '0'}`, 215, 270);
+    ctx.fillText(`${gameData.totals?.averagePlaytime || '0'}h`, 215, 270);
     // Total playtime
     ctx.fillStyle = `#${sub_title_color}`;
     ctx.font = '16px Geist';
-    ctx.fillText('Avg, Playtime', 370, 240);
+    ctx.fillText('Total Playtime', 370, 240);
     ctx.fillStyle = `#${text_color}`;
     ctx.font = '600 26px Geist';
     ctx.fillText(`${gameData.totals?.totalPlaytimeHours || '0'}h`, 370, 270);
